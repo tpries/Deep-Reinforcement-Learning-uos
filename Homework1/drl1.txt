@@ -1,5 +1,5 @@
-Deep Reinforcement Learning Homework 1
-======================================
+Deep Reinforcement Learning Homework 1 - Berit Eichler, Tom Pries
+=================================================================
 
 Exercise 1:
 
@@ -41,7 +41,7 @@ Policy:
 	- Always check it may be mate.
 	- Capture pieces that are not defended.
 
---------------------------------------
+-----------------------------------------------------------------
 
 Exercise 2:
 
@@ -79,7 +79,7 @@ Rewards:
         Landing in landing pad: 200
         Ground contact (per leg): 10
 
---------------------------------------
+-----------------------------------------------------------------
 
 Exercise 3:
 
