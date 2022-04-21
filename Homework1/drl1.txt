@@ -12,7 +12,7 @@ State Space:
 	We do not care about whose move it is, as we assume
 	that the agent only gets to see the state if it's their turn.
 
-Actions Space: 
+Action Space: 
 	Actions in chess can be devided in two subactions:
 	1.
 		Choosing the piece that the agent wants to move.
@@ -27,7 +27,7 @@ State Transition Dynamics:
 	That means an action that leads to a certain state s'
 	will always result in s'.
 
-Reward Function: 
+Rewards
 	- Negative reward when the move chosen by the agent is not a legal move.
 	- Positive reward when an opponents piece is captured.
 	- Negative reward when the opponent captures one of the agents pieces.
@@ -55,7 +55,7 @@ State space:
         - Is the left leg in contact with the ground?
         - Is the right leg in contact with the ground?
 
-Actions:
+Action space:
         - 1 Do Nothing 
         - 2 Fire left
         - 3 Fire main
@@ -72,7 +72,7 @@ State Transition Dynamics:
 	Firing on the right: movement to the left + gravity -> diagonally down-left
         Firing in the middle: move up
 
-Reward:
+Rewards:
         Crashing: -100
 	Succesful landing: 100
         Fire main engine: -0.3/frame
@@ -89,7 +89,8 @@ Reward function: Gives the agent feedback on how he performs in the given enviro
 Trasition Function: Gives the probability for ending up in state s' when being in state s and performing action a.
 
 Example Chess: 
-	State transition function:
+
+State transition function:
 	In an isolated environment without disturbances from the outside, 
 	the probability for reaching the desired state s' that results from performing action a in state s is always 1. 
 	Under ideal circumstances a game of chess is a deterministic game.
@@ -103,6 +104,7 @@ Rewards:
 	Checkmating the oponents king yields the ultimate reward.
 
 
+
 Example CartPole Game (https://jeffjar.me/cartpole.html):
 
 State transition function:
@@ -110,15 +112,14 @@ State transition function:
 	If there would be wind, however, choosing not to move may result in getting moved by the force of the wind. The outter factor
 	changes the state transitions.
 	
-Rewards
+Rewards:
 	The agents gets a reward per frame. Dropping the stick results in a negative reward and the end of the episode. 
 
-b)
+b.)
 
 In toy problems (like lunar lander and cart pole) the environment dynamics are known and controlled by the developer (the wind can be 
 enabled in the lunar lander szenario for example). In real life applications however, it is very difficult to account for all environmental 
-dynamics. Knowing which dynamics to expect can certainly make it easier to solve a problem via RL as policies and general behaviour
-can be adapted. 
+dynamics. Knowing which dynamics to expect can certainly make it easier to solve a problem via RL as policies and general behaviour can be adapted. 
 
 
 
