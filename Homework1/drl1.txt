@@ -1,0 +1,124 @@
+Deep Reinforcement Learning Homework 1
+======================================
+
+Exercise 1:
+
+State Space: 
+	An input vector for our agent may be a vector of the dimension (64,1). 
+	Where each entry can be a value between 1 and 12.
+ 	Each number would refere to a certain piece and color. 
+	For example: 1-> white pawn, 2->black pawn and so on.
+
+	We do not care about whose move it is, as we assume
+	that the agent only gets to see the state if it's their turn.
+
+Actions Space: 
+	Actions in chess can be devided in two subactions:
+	1.
+		Choosing the piece that the agent wants to move.
+	2.
+		Moving the piece to a field (free/occupied does not matter for now).
+
+	We do not care about the action being a legal chess move yet.
+
+State Transition Dynamics:
+	As an optimal chess environment is a deterministic one,
+	the state transition function is always 1.
+	That means an action that leads to a certain state s'
+	will always result in s'.
+
+Reward Function: 
+	- Negative reward when the move chosen by the agent is not a legal move.
+	- Positive reward when an opponents piece is captured.
+	- Negative reward when the opponent captures one of the agents pieces.
+	- Large positive reward and end of episode when the opponent is checkmated.
+	- Large negative reward and end of episode when the agents king gets checkmated.
+
+Policy: 
+	- Move pieces to the center of the board so that they can reach more fields
+	  and have larger impact on the game.
+	- Keep the king safe (always have defending pieces around your king?).
+	- Always check it may be mate.
+	- Capture pieces that are not defended.
+
+--------------------------------------
+
+Exercise 2:
+
+State space:
+        A vector consisting of 7 entries:
+	- The x coordinate of the shuttle
+        - The y coordinate of the shuttle
+        - The x velocity of the shuttle
+        - The y velocity of the shuttle
+        - The orientation angle of the shuttle
+        - Is the left leg in contact with the ground?
+        - Is the right leg in contact with the ground?
+
+Actions:
+        - 1 Do Nothing 
+        - 2 Fire left
+        - 3 Fire main
+        - 4 Fire right 
+
+Policy: 
+	The vector consisting of x velocity and x coordinate should be pointed towards the center (0,0).
+	An angle that is too sharp should be avoided.
+	Target height should be proportional to the horizontal distance to the goal.
+
+State Transition Dynamics:
+        No firing: Falling downward because of gravity
+        Firing on the left: movement to the right + gravity -> diagonally down-right
+	Firing on the right: movement to the left + gravity -> diagonally down-left
+        Firing in the middle: move up
+
+Reward:
+        Crashing: -100
+	Succesful landing: 100
+        Fire main engine: -0.3/frame
+        Landing in landing pad: 200
+        Ground contact (per leg): 10
+
+--------------------------------------
+
+Exercise 3:
+
+a.)
+
+Reward function: Gives the agent feedback on how he performs in the given environment.
+Trasition Function: Gives the probability for ending up in state s' when being in state s and performing action a.
+
+Example Chess: 
+	State transition function:
+	In an isolated environment without disturbances from the outside, 
+	the probability for reaching the desired state s' that results from performing action a in state s is always 1. 
+	Under ideal circumstances a game of chess is a deterministic game.
+	But under natural circumstances for example when one's playing chess on the computer and performing a move, their mouse may
+	accidentally slips. In this case the probability of reaching the desired field would be less than one. 
+	
+	
+Rewards:
+	The agent gets a positive reward for capturing a piece of the opponent and a negativ reward when one of its own pieces is captured.
+	Capturing the queen yields more reward than capturing a pawn.
+	Checkmating the oponents king yields the ultimate reward.
+
+
+Example CartPole Game (https://jeffjar.me/cartpole.html):
+
+State transition function:
+	Moving the cart pole to the right results in a certain increase of the x coordinate of the cart, and vice versa
+	If there would be wind, however, choosing not to move may result in getting moved by the force of the wind. The outter factor
+	changes the state transitions.
+	
+Rewards
+	The agents gets a reward per frame. Dropping the stick results in a negative reward and the end of the episode. 
+
+b)
+
+In toy problems (like lunar lander and cart pole) the environment dynamics are known and controlled by the developer (the wind can be 
+enabled in the lunar lander szenario for example). In real life applications however, it is very difficult to account for all environmental 
+dynamics. Knowing which dynamics to expect can certainly make it easier to solve a problem via RL as policies and general behaviour
+can be adapted. 
+
+
+
