@@ -2,12 +2,8 @@ import random
 from Agent import Agent
 from GridField import GridField
 from BlockedForm import BlockedForm
-<<<<<<< Updated upstream
 import numpy as np
-=======
 import cv2
-import matplotlib.pyplot as plt
->>>>>>> Stashed changes
 
 class GridWorld:
 
@@ -16,7 +12,6 @@ class GridWorld:
         # only one length bc we only want quadratic envs, must be atleast 5
         assert side_length > 4
 
-        self.agent = Agent()
         self.state_x = 0
         self.state_y = 0
 
@@ -27,6 +22,8 @@ class GridWorld:
             self.field.append([])
             for column in range(side_length):
                 self.field[row].append(GridField())
+
+        self.field[0][0].agent_here = True
 
         # set walls
         if multiple_obstacles:
@@ -199,7 +196,9 @@ class GridWorld:
                 row_string += " "
             print(row_string)
 
-<<<<<<< Updated upstream
+    def positionOutOfBounds(self,x,y):
+        return x < 0 or y < 0 or x > self.side_length or y > self.side_length
+
     def step(self,action):
         # check if tile is random
         if self.field[self.state_x][self.state_y].isRandom():
@@ -211,22 +210,21 @@ class GridWorld:
         new_y = int(self.state_y+move[1])
         next_field = self.field[new_x][new_y]
 
-        if next_field.isBlocked():
+        if next_field.isBlocked() or self.positionOutOfBounds(new_x,new_y):
             #do nothing
             return (self.state_x, self.state_y), 0, False
         else:
-            self.field[self.state_x][self.state_y].visited=True
+            self.field[self.state_x][self.state_y].was_visited = True
+            self.field[self.state_x][self.state_y].agent_here = False
 
             # update state
             self.state_x = new_x
             self.state_y = new_y
-            if next_field.getReward() == 1:
-                self.agent += 1
-            else:
-                self.agent += next_field.getReward()
+            next_field.agent_here = True
 
         return (self.state_x, self.state_y),next_field.getReward(), next_field.isGoal()
-=======
+
+
     def visualize(self):
 
         save_images = []
@@ -244,49 +242,12 @@ class GridWorld:
         cv2.imshow('grid', final_grid_image)
         cv2.waitKey(0)
 
-        """blank = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border.jpg")
-        blank_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border_random.jpg")
-        blocked = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\wall_border.jpg")
-        goal = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\goal.jpg")
-        hot = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\klein_border.jpg")
-        hot_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\klein_border_random.jpg")
-        hell = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\mittel_border.jpg")
-        hell_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\mittel_border_random.jpg")
-        lava = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\lava_border.jpg")
-        lava_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\lava_border_random.jpg")
+    def reset(self):
+        self.state_x = 0
+        self.state_y = 0
 
-        save_images = []
         for row in self.field:
-            row_images = []
             for tile in row:
-                if tile.isBlocked():
-                    image = blocked
-                if tile.getReward() == 1:
-                    image = goal
-                if tile.getReward() == 0 and not tile.isBlocked():
-                    image = blank
-                    if tile.isRandom():
-                        image = blank_random
-                if tile.getReward() < 0:
-                    if -0.3 <= tile.getReward():
-                        image = hot
-                        if tile.isRandom():
-                            image = hot_random
-                    elif -0.7 <= tile.getReward() < 0.3:
-                        image = hell
-                        if tile.isRandom():
-                            image = hell_random
-                    elif -1 <= tile.getReward():
-                        image = lava
-                        if tile.isRandom():
-                            image = lava_random
-                row_images.append(image)
-
-            concatinated_image = cv2.hconcat(row_images)
-            save_images.append(concatinated_image)
-
-        final_grid_image = cv2.vconcat(save_images)
+                tile.was_visited = False
 
 
-        cv2.imshow('grid', final_grid_image)
-        cv2.waitKey(0)"""

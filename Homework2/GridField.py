@@ -5,8 +5,9 @@ class GridField:
         self.reward = 0
         self.blocked = False
         self.random = False
-        self.was_visited = False
+        self.visited = False
         self.image = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border.jpg")
+        self.agent_here = False
 
     def setReward(self,reward):
         self.reward = reward
@@ -23,31 +24,27 @@ class GridField:
     def isGoal(self):
         return self.reward == 1
 
-    @property
-    def visited(self):
-        return self.was_visited
-
     def update(self):
         pfad= ""
-        if self.isBlocked():
-            pfad.append("wall_border")
+        if self.blocked:
+            pfad += "wall_border"
         elif self.isGoal():
-            pfad.append("goal")
+            pfad += "goal"
         elif self.getReward() == 0:
-            pfad.append("empty_border")
+            pfad += "empty_border"
         elif -1 <= self.getReward() < -0.6:
-            pfad.append("lava_border")
+            pfad += "lava_border"
         elif -.6 <= self.getReward() < -0.3:
-            pfad.append("mittel_border")
+            pfad += "mittel_border"
         elif -.3 <= self.getReward() < 0:
-            pfad.append("klein_border")
+            pfad += "klein_border"
 
-        if self.isRandom():
-            pfad.append("random_")
+        if self.random:
+            pfad += "random_"
         if self.agent_here:
-            pfad.append("character")
-        elif self.was_visited():
-            pfad.append("_trace")
+            pfad += "character"
+        elif self.visited:
+            pfad += "_trace"
 
         final_image = r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\\"
         final_image += pfad + ".jpg"
