@@ -19,3 +19,6 @@ class GridField:
 
     def isBlocked(self):
         return self.blocked
+
+    def isRandom(self):
+        return self.random_factor != 0
