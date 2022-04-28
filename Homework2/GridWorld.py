@@ -2,6 +2,7 @@ import random
 from Agent import Agent
 from GridField import GridField
 from BlockedForm import BlockedForm
+import numpy as np
 
 class GridWorld:
 
@@ -11,6 +12,9 @@ class GridWorld:
         assert side_length > 4
 
         self.agent = Agent()
+        self.state_x = 0
+        self.state_y = 0
+
         self.side_length = side_length
         self.field = []
 
@@ -68,7 +72,7 @@ class GridWorld:
 
                 if not_blocked and not_goal and not_start and not_random:
                     placed = True
-                    self.field[x][y].randomize()
+                    self.field[x][y].random = True
 
     def fieldIsBlocked(self,x,y):
 
@@ -160,7 +164,7 @@ class GridWorld:
                     # so let's place it
                     for coord in coordinates:
                         #print(coord[0],coord[1])
-                        self.field[coord[0]][coord[1]].block()
+                        self.field[coord[0]][coord[1]].blocked = True
 
     def __getitem__(self, position):
         x,y = position
@@ -191,4 +195,28 @@ class GridWorld:
             print(row_string)
 
     def step(self,action):
-        pass
+        # check if tile is random
+        if self.field[self.state_x][self.state_y].isRandom():
+            move = action.getRandomMove()
+        else:
+            move = action.getMove()
+
+        new_x = int(self.state_x+move[0])
+        new_y = int(self.state_y+move[1])
+        next_field = self.field[new_x][new_y]
+
+        if next_field.isBlocked():
+            #do nothing
+            return (self.state_x, self.state_y), 0, False
+        else:
+            self.field[self.state_x][self.state_y].visited=True
+
+            # update state
+            self.state_x = new_x
+            self.state_y = new_y
+            if next_field.getReward() == 1:
+                self.agent += 1
+            else:
+                self.agent += next_field.getReward()
+
+        return (self.state_x, self.state_y),next_field.getReward(), next_field.isGoal()

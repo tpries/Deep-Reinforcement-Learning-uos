@@ -2,7 +2,6 @@ from GridWorld import GridWorld
 import time
 
 def main():
-
     for i in range(1):
         start_time = time.time()
         random_grid_world = GridWorld(5+i, True)
