@@ -214,7 +214,7 @@ class GridWorld:
             #do nothing
             return (self.state_x, self.state_y), 0, False
         else:
-            self.field[self.state_x][self.state_y].was_visited = True
+            self.field[self.state_x][self.state_y].visited = True
             self.field[self.state_x][self.state_y].agent_here = False
 
             # update state
@@ -240,7 +240,8 @@ class GridWorld:
         final_grid_image = cv2.vconcat(save_images)
 
         cv2.imshow('grid', final_grid_image)
-        cv2.waitKey(0)
+        cv2.waitKey(1000)
+        cv2.destroyAllWindows()
 
     def reset(self):
         self.state_x = 0

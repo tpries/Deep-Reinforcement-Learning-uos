@@ -40,9 +40,9 @@ class GridField:
             pfad += "klein_border"
 
         if self.random:
-            pfad += "random_"
+            pfad += "_random"
         if self.agent_here:
-            pfad += "character"
+            pfad += "_character"
         elif self.visited:
             pfad += "_trace"
 

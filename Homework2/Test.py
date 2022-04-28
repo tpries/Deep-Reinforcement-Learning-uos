@@ -5,14 +5,14 @@ import random
 
 def main():
     for i in range(1):
-        random_grid_world = GridWorld(5+i, True)
+        random_grid_world = GridWorld(10+i, False)
         random_grid_world.visualize()
 
-        random_grid_world.print()
-        for i in range(10):
+
+        for i in range(50):
             action = Action(random.randint(1,4))
-            #action.print()
-            #print(random_grid_world.step(action))
+            random_grid_world.step(action)
+            random_grid_world.visualize()
 
 if __name__ == "__main__":
     main()

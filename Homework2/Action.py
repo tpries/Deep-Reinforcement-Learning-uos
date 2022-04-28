@@ -22,18 +22,18 @@ class Action:
             x_move = 0
             y_move = -1
 
-        if action == 2:
+        if action == 3:
             x_move = 1
             y_move = 0
 
-        if action == 2:
+        if action == 4:
             x_move = -1
             y_move = 0
 
         return [x_move,y_move]
 
 
-    def getRandomAction(self):
+    def getRandomMove(self):
         return self._getDirection(random.randint(1, 4))
 
     def getMove(self):
