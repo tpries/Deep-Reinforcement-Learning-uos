@@ -14,8 +14,8 @@ class GridField:
     def block(self):
         self.blocked = True
 
-    def setRandomFactor(self,random_factor):
-        self.random_factor = random_factor
+    def randomize(self):
+        self.random_factor = 0.25
 
     def isBlocked(self):
         return self.blocked
