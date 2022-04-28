@@ -52,6 +52,22 @@ class GridWorld:
                     placed = True
                     self.field[x][y].setReward(round(random.uniform(-1, 0),1))
 
+        # place side_length random fields
+        for i in range(3):
+            placed = False
+            while not placed:
+                x = random.randint(0, side_length - 1)
+                y = random.randint(0, side_length - 1)
+
+                # conditions
+                not_start = not (x == 0 & y == 0)
+                not_goal = self.field[x][y].getReward() != 1
+                not_blocked = not self.field[x][y].isBlocked()
+                not_random = not self.field[x][y].isRandom()
+
+                if not_blocked and not_goal and not_start and not_random:
+                    placed = True
+                    self.field[x][y].randomize()
 
     def fieldIsBlocked(self,x,y):
 
@@ -145,9 +161,6 @@ class GridWorld:
                         #print(coord[0],coord[1])
                         self.field[coord[0]][coord[1]].block()
 
-    def _placeOneWall(self,side_length):
-        pass
-
     def __getitem__(self, position):
         x,y = position
 
@@ -168,7 +181,10 @@ class GridWorld:
                 else:
                     if tile.getReward() != 0:
                         row_string += str(tile.getReward())
+                    elif tile.isRandom():
+                        row_string += "?"
                     else:
-                        row_string += "O"
+                        row_string += "0"
+
                 row_string += " "
             print(row_string)
