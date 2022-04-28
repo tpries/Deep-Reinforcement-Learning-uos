@@ -18,7 +18,40 @@ class GridWorld:
             for column in range(side_length):
                 self.field[row].append(GridField())
 
-        self._placeMultipleWalls(side_length)
+        # set walls
+        if multiple_obstacles:
+            self._placeWalls(side_length,number_of_walls=side_length-2,size_of_walls=-2)
+        else:
+            self._placeWalls(side_length,number_of_walls=1,size_of_walls=side_length-1)
+
+        # place positive reward/goal
+        # we dont want it to close so a eucl distance of side_length/2 between start and goal at least
+        goal_placed = False
+        while not goal_placed:
+            x = random.randint(0, side_length - 1)
+            y = random.randint(0, side_length - 1)
+
+            distance_to_start = x**2 + y**2
+            if distance_to_start >= (side_length/2)**2 and not self.field[x][y].isBlocked():
+                self.field[x][y].setReward(1)
+                goal_placed = True
+
+        # place (side_length*side_length)/5 negative rewards
+        for i in range(int((side_length**2)/5)):
+            placed = False
+            while not placed:
+                x = random.randint(0, side_length - 1)
+                y = random.randint(0, side_length - 1)
+
+                # conditions
+                not_start = not (x == 0 & y == 0)
+                not_rewarded = self.field[x][y].getReward() == 0
+                not_blocked = not self.field[x][y].isBlocked()
+
+                if not_blocked and not_rewarded and not_start:
+                    placed = True
+                    self.field[x][y].setReward(round(random.uniform(-1, 0),1))
+
 
     def fieldIsBlocked(self,x,y):
 
@@ -44,7 +77,8 @@ class GridWorld:
 
         return True
 
-    def _placeMultipleWalls(self,side_length):
+    # maybe export into BlockedForm
+    def _placeWalls(self, side_length, number_of_walls=2, size_of_walls=3):
 
         # we will place side_length -3 obstacles of the size 2
         # they are randomly going to be horizontal or vertical
@@ -130,7 +164,11 @@ class GridWorld:
             for tile in row:
 
                 if tile.isBlocked():
-                    row_string += "X-"
+                    row_string += "X"
                 else:
-                    row_string += "O-"
+                    if tile.getReward() != 0:
+                        row_string += str(tile.getReward())
+                    else:
+                        row_string += "O"
+                row_string += " "
             print(row_string)

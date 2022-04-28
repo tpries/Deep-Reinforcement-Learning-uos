@@ -8,6 +8,9 @@ class GridField:
     def setReward(self,reward):
         self.reward = reward
 
+    def getReward(self):
+        return self.reward
+
     def block(self):
         self.blocked = True
 
