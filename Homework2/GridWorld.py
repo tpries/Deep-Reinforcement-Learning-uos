@@ -2,7 +2,12 @@ import random
 from Agent import Agent
 from GridField import GridField
 from BlockedForm import BlockedForm
+<<<<<<< Updated upstream
 import numpy as np
+=======
+import cv2
+import matplotlib.pyplot as plt
+>>>>>>> Stashed changes
 
 class GridWorld:
 
@@ -194,6 +199,7 @@ class GridWorld:
                 row_string += " "
             print(row_string)
 
+<<<<<<< Updated upstream
     def step(self,action):
         # check if tile is random
         if self.field[self.state_x][self.state_y].isRandom():
@@ -220,3 +226,53 @@ class GridWorld:
                 self.agent += next_field.getReward()
 
         return (self.state_x, self.state_y),next_field.getReward(), next_field.isGoal()
+=======
+    def visualize(self):
+        blank = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border.jpg")
+        blank_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border_random.jpg")
+        blocked = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\wall_border.jpg")
+        goal = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\goal.jpg")
+        hot = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\klein_border.jpg")
+        hot_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\klein_border_random.jpg")
+        hell = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\mittel_border.jpg")
+        hell_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\mittel_border_random.jpg")
+        lava = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\lava_border.jpg")
+        lava_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\lava_border_random.jpg")
+
+        save_images = []
+        for row in self.field:
+            row_images = []
+            for tile in row:
+                if tile.isBlocked():
+                    image = blocked
+                if tile.getReward() == 1:
+                    image = goal
+                if tile.getReward() == 0 and not tile.isBlocked():
+                    image = blank
+                    if tile.isRandom():
+                        image = blank_random
+                if tile.getReward() < 0:
+                    if -0.3 <= tile.getReward():
+                        image = hot
+                        if tile.isRandom():
+                            image = hot_random
+                    elif -0.7 <= tile.getReward() < 0.3:
+                        image = hell
+                        if tile.isRandom():
+                            image = hell_random
+                    elif -1 <= tile.getReward():
+                        image = lava
+                        if tile.isRandom():
+                            image = lava_random
+                row_images.append(image)
+
+            concatinated_image = cv2.hconcat(row_images)
+            save_images.append(concatinated_image)
+
+        final_grid_image = cv2.vconcat(save_images)
+
+
+        cv2.imshow('grid', final_grid_image)
+        cv2.waitKey(0)
+
+>>>>>>> Stashed changes
