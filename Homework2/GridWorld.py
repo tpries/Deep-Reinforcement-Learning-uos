@@ -1,5 +1,5 @@
 import random
-
+from Agent import Agent
 from GridField import GridField
 from BlockedForm import BlockedForm
 
@@ -10,6 +10,7 @@ class GridWorld:
         # only one length bc we only want quadratic envs, must be atleast 5
         assert side_length > 4
 
+        self.agent = Agent()
         self.side_length = side_length
         self.field = []
 
@@ -188,3 +189,6 @@ class GridWorld:
 
                 row_string += " "
             print(row_string)
+
+    def step(self,action):
+        pass
