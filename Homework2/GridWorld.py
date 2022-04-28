@@ -228,7 +228,23 @@ class GridWorld:
         return (self.state_x, self.state_y),next_field.getReward(), next_field.isGoal()
 =======
     def visualize(self):
-        blank = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border.jpg")
+
+        save_images = []
+
+        for row in self.field:
+            row_images = []
+            for tile in row:
+                tile.update()
+                row_images.append(tile.image)
+            concatenated_image = cv2.hconcat(row_images)
+            save_images.append(concatenated_image)
+
+        final_grid_image = cv2.vconcat(save_images)
+
+        cv2.imshow('grid', final_grid_image)
+        cv2.waitKey(0)
+
+        """blank = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border.jpg")
         blank_random = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border_random.jpg")
         blocked = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\wall_border.jpg")
         goal = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\goal.jpg")
@@ -273,6 +289,4 @@ class GridWorld:
 
 
         cv2.imshow('grid', final_grid_image)
-        cv2.waitKey(0)
-
->>>>>>> Stashed changes
+        cv2.waitKey(0)"""
