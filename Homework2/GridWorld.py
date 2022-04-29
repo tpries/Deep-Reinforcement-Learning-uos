@@ -1,8 +1,9 @@
-import random
+from Action import Action
 from Agent import Agent
 from GridField import GridField
 from BlockedForm import BlockedForm
 import numpy as np
+import  random
 import cv2
 
 class GridWorld:
@@ -29,7 +30,7 @@ class GridWorld:
         if multiple_obstacles:
             self._placeWalls(side_length,number_of_walls=side_length-2,size_of_walls=-2)
         else:
-            self._placeWalls(side_length,number_of_walls=1,size_of_walls=side_length-1)
+            self._placeWalls(side_length,number_of_walls=1,size_of_walls=side_length-2)
 
         # place positive reward/goal
         # we dont want it to close so a eucl distance of side_length/2 between start and goal at least
@@ -43,8 +44,8 @@ class GridWorld:
                 self.field[x][y].setReward(1)
                 goal_placed = True
 
-        # place (side_length*side_length)/5 negative rewards
-        for i in range(int((side_length**2)/5)):
+        # place (side_length*side_length)/10 negative rewards
+        for i in range(int((side_length**2)/10)):
             placed = False
             while not placed:
                 x = random.randint(0, side_length - 1)
@@ -106,7 +107,7 @@ class GridWorld:
         # we will place side_length -3 obstacles of the size 2
         # they are randomly going to be horizontal or vertical
         #for i in range(int(side_length/3)+1):
-        for i in range(2):
+        for i in range(number_of_walls):
             placed_properly = False
 
             while not placed_properly:
@@ -114,7 +115,7 @@ class GridWorld:
 
                 # list of coordinates that are going to be blocked once we know we can place the wall
                 coordinates = []
-                wall = BlockedForm(int(side_length/2))
+                wall = BlockedForm(size_of_walls)
 
                 x = random.randint(0,side_length-1)
                 y = random.randint(0,side_length-1)
@@ -197,9 +198,12 @@ class GridWorld:
             print(row_string)
 
     def positionOutOfBounds(self,x,y):
-        return x < 0 or y < 0 or x > self.side_length or y > self.side_length
+        return x < 0 or y < 0 or x >= self.side_length or y >= self.side_length
 
-    def step(self,action):
+    def step(self,action_index):
+
+        action = Action(action_index)
+
         # check if tile is random
         if self.field[self.state_x][self.state_y].isRandom():
             move = action.getRandomMove()
@@ -208,11 +212,13 @@ class GridWorld:
 
         new_x = int(self.state_x+move[0])
         new_y = int(self.state_y+move[1])
-        next_field = self.field[new_x][new_y]
 
-        if next_field.isBlocked() or self.positionOutOfBounds(new_x,new_y):
-            #do nothing
+        if self.positionOutOfBounds(new_x,new_y):
             return (self.state_x, self.state_y), 0, False
+
+        elif self.field[new_x][new_y].blocked:
+            return (self.state_x, self.state_y), 0, False
+
         else:
             self.field[self.state_x][self.state_y].visited = True
             self.field[self.state_x][self.state_y].agent_here = False
@@ -220,9 +226,9 @@ class GridWorld:
             # update state
             self.state_x = new_x
             self.state_y = new_y
-            next_field.agent_here = True
+            self.field[self.state_x][self.state_y].agent_here = True
 
-        return (self.state_x, self.state_y),next_field.getReward(), next_field.isGoal()
+        return (self.state_x, self.state_y),self.field[self.state_x][self.state_y].getReward(), self.field[self.state_x][self.state_y].isGoal()
 
 
     def visualize(self):
@@ -240,7 +246,7 @@ class GridWorld:
         final_grid_image = cv2.vconcat(save_images)
 
         cv2.imshow('grid', final_grid_image)
-        cv2.waitKey(1000)
+        cv2.waitKey(300)
         cv2.destroyAllWindows()
 
     def reset(self):
@@ -251,4 +257,4 @@ class GridWorld:
             for tile in row:
                 tile.was_visited = False
 
-
+        return 0, 0

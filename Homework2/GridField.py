@@ -1,4 +1,6 @@
+import os
 import cv2
+
 class GridField:
 
     def __init__(self):
@@ -6,7 +8,6 @@ class GridField:
         self.blocked = False
         self.random = False
         self.visited = False
-        self.image = cv2.imread(r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\empty_border.jpg")
         self.agent_here = False
 
     def setReward(self,reward):
@@ -46,6 +47,7 @@ class GridField:
         elif self.visited:
             pfad += "_trace"
 
-        final_image = r"C:\Users\berit\Deep-Reinforcement-Learning-uos\Homework2\Tile Images\\"
-        final_image += pfad + ".jpg"
-        self.image = cv2.imread(final_image)
+        script_dir = os.path.dirname(__file__)
+        rel_path = "Tile Images"
+        abs_file_path = os.path.join(script_dir, rel_path,pfad+".jpg")
+        self.image = cv2.imread(abs_file_path)
