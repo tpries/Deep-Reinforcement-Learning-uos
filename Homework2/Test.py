@@ -19,8 +19,8 @@ def n_sarsa(n, gridworld_size=5, multiple_walls=True, n_episodes=100):
     env = GridWorld(gridworld_size, multiple_walls)
 
     # learning parameters
-    alpha = 0.1
-    gamma = 0.9
+    alpha = 0.35
+    gamma = 0.95
     epsilon = 1.0
 
     # collecting all states
@@ -33,12 +33,13 @@ def n_sarsa(n, gridworld_size=5, multiple_walls=True, n_episodes=100):
     Q = {}
     for state in states:
         for action in range(4):
-            Q[(state,action)] = 0
+            Q[(state,action)] = 0 # np.random.uniform(-0.2,0.2)
 
     # initializing our memory
     state_memory = np.zeros((n, 2))
     action_memory = np.zeros(n)
     reward_memory = np.zeros(n)
+    times = 0
 
     for _ in range(n_episodes):
         done = False
@@ -53,9 +54,17 @@ def n_sarsa(n, gridworld_size=5, multiple_walls=True, n_episodes=100):
         state_memory[t % n] = state
 
         while not done:
+
             state, reward, done = env.step(action)
 
-            if _ % 1000 == 0:
+            if done:
+                times += 1
+                #print("Solved env! ", times, " times")
+
+            #if t > max((n_episodes-_)/ 100,50):
+            #    done = True
+
+            if _ == 0:
                 env.visualize()
 
             score += reward
@@ -73,7 +82,7 @@ def n_sarsa(n, gridworld_size=5, multiple_walls=True, n_episodes=100):
 
             tau = t - n + 1
             if tau >= 0:
-                G = [gamma**(j-tau-1)*reward_memory[(tau+n)%n] for j in range(tau+1, min(tau+n, T) + 1)]
+                G = [gamma**(j-tau-1)*reward_memory[j%n] for j in range(tau+1, min(tau+n, T) + 1)]
                 G = np.sum(G)
 
                 if tau + n < T:
@@ -99,13 +108,16 @@ def n_sarsa(n, gridworld_size=5, multiple_walls=True, n_episodes=100):
                 Q[(s,a)] += alpha*(G-Q[(s,a)])
 
         scores.append(score)
-        epsilon = epsilon -2 / n_episodes if epsilon > 0 else 0
+        epsilon = 1 - (_ / n_episodes)
 
-        if _ % 500 == 0:
+        if _ % 1000 == 0:
             print("Episode: ", _, " score: ", score, " epsilon: ",
-                  epsilon, " episode_length: ", t)
+                  epsilon, " episode_length: ", t, " times solved: ", times)
             episode_lengths = []
             scores = []
+            times = 0
+
+    return Q, env
 
 
 def main():
@@ -120,8 +132,33 @@ def main():
             #action.print()
             #print(random_grid_world.step(action))
     """
-    n_sarsa(16, 10, multiple_walls=True, n_episodes=10000)
+    for i in range(5):
+        env_size = 5 + i
+        Q, env = n_sarsa(env_size*30, env_size, multiple_walls=True, n_episodes=20000*(i+1))
 
+
+        for i in range(env_size):
+            action_string = ""
+            for j in range(env_size):
+                for a in range(4):
+                    action_string += str(Q[((i,j),a)]) + " "
+                action_string += "-"
+            action_string += "+++"
+            print(action_string)
+
+        done = False
+        state = env.reset()
+        action = choose_action(Q, state, 0)
+
+        step = 0
+        while not done:
+            step += 1
+            if step == 10:
+                print("stop")
+                break
+            state, reward, done = env.step(action)
+            env.visualize(write=True)
+            action = choose_action(Q, state, 0)
 
 if __name__ == "__main__":
     main()

@@ -3,8 +3,11 @@ from Agent import Agent
 from GridField import GridField
 from BlockedForm import BlockedForm
 import numpy as np
+import os
 import  random
 import cv2
+import time
+
 
 class GridWorld:
 
@@ -12,6 +15,8 @@ class GridWorld:
 
         # only one length bc we only want quadratic envs, must be atleast 5
         assert side_length > 4
+
+        self.frame_counter = 0
 
         self.state_x = 0
         self.state_y = 0
@@ -44,8 +49,8 @@ class GridWorld:
                 self.field[x][y].setReward(1)
                 goal_placed = True
 
-        # place (side_length*side_length)/10 negative rewards
-        for i in range(int((side_length**2)/10)):
+        # place (side_length*side_length)/5 negative rewards
+        for i in range(3):#int((side_length**2)/6)):
             placed = False
             while not placed:
                 x = random.randint(0, side_length - 1)
@@ -53,7 +58,7 @@ class GridWorld:
 
                 # conditions
                 not_start = not (x == 0 & y == 0)
-                not_rewarded = self.field[x][y].getReward() == 0
+                not_rewarded = self.field[x][y].getReward() != 1
                 not_blocked = not self.field[x][y].isBlocked()
 
                 if not_blocked and not_rewarded and not_start:
@@ -61,7 +66,7 @@ class GridWorld:
                     self.field[x][y].setReward(round(random.uniform(-1, 0),1))
 
         # place side_length random fields
-        for i in range(3):
+        for i in range(2):
             placed = False
             while not placed:
                 x = random.randint(0, side_length - 1)
@@ -214,10 +219,10 @@ class GridWorld:
         new_y = int(self.state_y+move[1])
 
         if self.positionOutOfBounds(new_x,new_y):
-            return (self.state_x, self.state_y), 0, False
+            return (self.state_x, self.state_y), self.field[self.state_x][self.state_y].getReward(), False
 
         elif self.field[new_x][new_y].blocked:
-            return (self.state_x, self.state_y), 0, False
+            return (self.state_x, self.state_y), self.field[self.state_x][self.state_y].getReward(), False
 
         else:
             self.field[self.state_x][self.state_y].visited = True
@@ -231,7 +236,7 @@ class GridWorld:
         return (self.state_x, self.state_y),self.field[self.state_x][self.state_y].getReward(), self.field[self.state_x][self.state_y].isGoal()
 
 
-    def visualize(self):
+    def visualize(self, write=False):
 
         save_images = []
 
@@ -245,8 +250,15 @@ class GridWorld:
 
         final_grid_image = cv2.vconcat(save_images)
 
+        if write:
+            script_dir = os.path.dirname(__file__)
+            rel_path = "Frames"
+            abs_file_path = os.path.join(script_dir, rel_path, str(time.time()) + str(self.frame_counter) + "__" + ".jpg")
+            cv2.imwrite(abs_file_path,final_grid_image)
+            self.frame_counter += 1
+
         cv2.imshow('grid', final_grid_image)
-        cv2.waitKey(300)
+        cv2.waitKey(100)
         cv2.destroyAllWindows()
 
     def reset(self):
@@ -255,6 +267,9 @@ class GridWorld:
 
         for row in self.field:
             for tile in row:
-                tile.was_visited = False
+                tile.visited = False
+                tile.agent_here = False
+
+        self.field[0][0].agent_here = True
 
         return 0, 0
